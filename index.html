@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(135deg, #ffd6e8, #d6eaff);
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    h1 { color: #ff4b9f; }
+    .msg { font-size: 18px; margin-top: 15px; }
+
+    /* Hiệu ứng mượt xuất hiện chữ */
+    .smooth-word {
+      opacity: 0;
+      transition: opacity 0.25s ease-in;
+    }
+    .smooth-word.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Start Screen -->
+<div id="start-screen" style="
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: linear-gradient(135deg, #ffd6e8, #d6eaff);
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; z-index:9999; text-align:center;">
+  
+  <h1 style="font-size:32px; color:#ff4b9f; margin-bottom:20px;">
+    🎉 Chúc mừng sinh nhật nha chị 🎉
+  </h1>
+  
+  <button class="start-btn" onclick="startApp()" style="
+    padding:14px 24px; border-radius:12px; border:none;
+    background:#ff4b9f; color:white; font-size:18px; cursor:pointer;">
+    BẮT ĐẦU
+  </button>
+</div>
+
+<div class="card">
+
+  <!-- Audio -->
+  <audio id="bgm" src="music.mp3" autoplay loop muted></audio>
+
+  <button onclick="toggleSound()" style="
+      padding:10px 20px; border-radius:10px; border:none;
+      background:#ff4b9f; color:white; cursor:pointer; margin-bottom:15px;">
+      🔊 Tắt âm thanh
+  </button>
+
+  <script>
+    const audio = document.getElementById('bgm');
+    let soundOn = true;
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      audio.muted = !soundOn;
+      event.target.innerText = soundOn ? "🔊 Tắt âm thanh" : "🔈 Bật âm thanh";
+    }
+
+    function startApp() {
+      audio.muted = false;
+      audio.play().catch(()=>{});
+      document.getElementById('start-screen').style.display = 'none';
+      startTypingAfterStart();
+    }
+  </script>
+
+  <h1>🎉 Happy Birthday 🎉</h1>
+  <h2 id="name">Dương Thị Kiều Trang</h2>
+  <p class="msg">Chúc chị một ngày thật vui vẻ, tràn đầy bất ngờ và hạnh phúc! 🎂💖</p>
+  <p class="msg">Ở xa nên em hong có quà gi được, đợi em 8 tháng nữa nhe💖</p>
+
+  <div style="margin-top:20px;">
+    <img src="gif.gif" alt="Cute Birthday GIF" 
+      style="width:100%; max-width:400px; border-radius:15px; margin-top:20px;" />
+  </div>
+</div>
+
+<!-- EFFECT: CONFETTI -->
+<canvas id="confetti" style="
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  pointer-events:none;"></canvas>
+
+<script>
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+for (let i = 0; i < 150; i++) {
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height - canvas.height,
+    size: Math.random()*6 + 4,
+    speed: Math.random()*3 + 1,
+    color: `hsl(${Math.random()*360}, 100%, 60%)`
+  });
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, p.size, p.size);
+    p.y += p.speed;
+    if (p.y > canvas.height) p.y = -10;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+<!-- Hiệu ứng gõ chữ từng từ mượt hơn -->
+<script>
+function typeWriterWords(id, speed = 180, delay = 0, callback = null) {
+  const el = document.getElementById(id);
+  const text = el.getAttribute("data-text");
+  const words = text.split(" ");
+  el.innerHTML = "";
+  el.style.visibility = "visible";
+
+  let i = 0;
+
+  function writeWord() {
+    if (i < words.length) {
+      const span = document.createElement("span");
+      span.className = "smooth-word";
+      span.textContent = (i === 0 ? words[i] : " " + words[i]);
+      el.appendChild(span);
+
+      // cho hiệu ứng fade-in
+      setTimeout(() => span.classList.add("show"), 20);
+
+      i++;
+      setTimeout(writeWord, speed);
+    } else if (callback) {
+      setTimeout(callback, 500);
+    }
+  }
+
+  setTimeout(writeWord, delay);
+}
+
+function startTypingAfterStart() {
+  typeWriterWords("letter1", 160, 0, () => {
+    typeWriterWords("letter2", 160, 0, () => {
+      typeWriterWords("letter3", 160);
+    });
+  });
+}
+</script>
+
+<div style="
+  max-width:600px; margin:40px auto; background:white;
+  padding:20px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.15);
+">
+  <h2 style="font-size:24px; font-weight:bold; margin-bottom:10px;">Gửi bạn một lời nhắn nhỏ…</h2>
+
+<p id="letter1" data-text="Chào chị nhe=), em Kiên đây ạ. Vậy là em với chị chơi chung cũng được hơn 3 tháng òi, em cảm thấy rất là vui khi có chị ở bên, quan tâm và động viên em. Chỉ tiếc là em ở xa chị quá nên đôi lúc muốn rủ chị đi chơi cũng hong được nữa😭😭😭. Thôi thì ráng năm sau đậu đại học để ở gần chị hơn cũng được=)." style="text-align:left; visibility:hidden;"></p>
+
+<p id="letter2" data-text="Chúc chị có một ngày sinh nhật vui vẻ nhe💖💖💖. Mấy nay cũng hong rảnh nên em làm tạm cái này, hơi sơ sài mong chị thông cảm, năm sau em bù cho=). Chúc chị Trang tuổi mới tràn ngập niềm vui và hạnh phúc ạ. Mong chị luôn ở bên em để còn chơi chung với em nữa=)." style="text-align:left; margin-top:12px; visibility:hidden;"></p>
+
+<p id="letter3" data-text="Nói nhỏ nè, em thích chị nhìu lắm a...." style="text-align:left; margin-top:12px; font-style:italic; visibility:hidden;"></p>
+
+</div>
+
+</body>
+</html>
